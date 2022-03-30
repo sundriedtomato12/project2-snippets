@@ -4,7 +4,10 @@
   "description": "# basic-node-bootcamp",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:create": "createdb snippets",
+    "tables:create": "psql -d snippets -f database_changes/init_tables.sql",
+    "data:seed": "psql -d snippets -f database_changes/seed.sql"
   },
   "repository": {
     "type": "git",
@@ -19,9 +22,12 @@
   },
   "homepage": "https://github.com/sundriedtomato12/project2-snippets#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "date-fns": "^2.28.0",
     "ejs": "^3.1.6",
     "express": "^4.17.3",
     "jssha": "^3.2.0",
+    "method-override": "^3.0.0",
     "pg": "^8.7.3"
   },
   "devDependencies": {

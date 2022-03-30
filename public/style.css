@@ -1,0 +1,87 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  text-decoration: none;
+  list-style: none;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Ubuntu";
+}
+
+nav {
+  font-family: "Ubuntu";
+  background: pink;
+  height: 60px;
+  border-bottom: 1px solid black;
+}
+
+img.nav-logo {
+  margin: 5px 10px;
+  height: 50px;
+}
+
+nav ul {
+  float: right;
+  margin-right: 10px;
+}
+
+nav ul li {
+  display: inline-block;
+  line-height: 60px;
+  margin: 0 3px;
+}
+
+nav ul li a {
+  color: black;
+  font-size: 18px;
+  padding: 7px 12px;
+  border-radius: 3px;
+}
+
+a:hover {
+  background: #cecece;
+  transition: 0.5s;
+}
+
+.checkbtn {
+  font-size: 28px;
+  color: rgb(31, 31, 31);
+  float: right;
+  line-height: 60px;
+  margin-right: 38px;
+  cursor: pointer;
+  display: none;
+}
+
+#check {
+  display: none;
+}
+
+@media (max-width: 430px) {
+  .checkbtn {
+    display: block;
+  }
+  ul {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background: rgb(172, 172, 172);
+    top: 60px;
+    left: -100%;
+    text-align: center;
+    transition: all 0.5s;
+  }
+  nav ul li {
+    display: block;
+  }
+  a:hover {
+    background: none;
+    font-weight: bold;
+  }
+
+  #check:checked ~ ul {
+    left: 0;
+  }
+}
