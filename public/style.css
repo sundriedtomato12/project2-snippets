@@ -12,7 +12,7 @@ body {
 
 nav {
   font-family: "Ubuntu";
-  background: pink;
+  background: #c8f2fa;
   height: 60px;
   border-bottom: 1px solid black;
 }
@@ -35,19 +35,19 @@ nav ul li {
 
 nav ul li a {
   color: black;
-  font-size: 18px;
+  font-size: 17px;
   padding: 7px 12px;
   border-radius: 3px;
 }
 
-a:hover {
-  background: #cecece;
+nav ul li a:hover {
+  background: #94ccfa;
   transition: 0.5s;
 }
 
 .checkbtn {
   font-size: 28px;
-  color: rgb(31, 31, 31);
+  color: #22577e;
   float: right;
   line-height: 60px;
   margin-right: 38px;
@@ -59,6 +59,11 @@ a:hover {
   display: none;
 }
 
+label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 @media (max-width: 430px) {
   .checkbtn {
     display: block;
@@ -67,7 +72,7 @@ a:hover {
     position: fixed;
     width: 100%;
     height: 100vh;
-    background: rgb(172, 172, 172);
+    background: #1a374d;
     top: 60px;
     left: -100%;
     text-align: center;
@@ -76,9 +81,11 @@ a:hover {
   nav ul li {
     display: block;
   }
-  a:hover {
+  nav ul li a {
+    color: #c8f2fa;
+  }
+  nav ul li a:hover {
     background: none;
-    font-weight: bold;
   }
 
   #check:checked ~ ul {

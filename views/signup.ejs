@@ -1,0 +1,22 @@
+<%-  include('header', {title: 'Snippets: Sign Up'}); -%>
+<body>
+<div class="signup-body">
+  <div class="header">
+    <h1>New User Sign Up</h1>
+  </div>
+  <div class="form">
+    <form class="signup-form" action="/signup" method="POST">
+      <div class="form-group">
+        <label for="username" class="form-label">Username</label><br/>
+        <input type="text" id="username" name="username" required/>
+      </div>
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label><br/>
+        <input type="password" id="password" name="password" required/>
+      </div>
+      <input type="submit" value="Sign Up"/>
+    </form>
+  </div>
+</div>
+</body>
+</html>
