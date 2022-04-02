@@ -42,12 +42,7 @@ app.use((request, response, next) => {
   // create new SHA object
   // reconstruct the hashed cookie string
   const unhashedCookieString = `${userId}-${SALT}`;
-  console.log('unhashed cookie string from middleware');
-  console.log(unhashedCookieString);
   const hashedCookieString = getHash(unhashedCookieString);
-  console.log('hashed string from middleware');
-  console.log(hashedCookieString);
-
   // verify if the generated hashed cookie string matches the request cookie value.
   // if hashed value doesn't match, return 403.
   if (hashedCookieString === loggedInHash) {
@@ -81,11 +76,8 @@ app.get('/signup', (request, response) => {
 app.post('/signup', (request, response) => {
   console.log('accept POST request to sign up new user');
   sqlQuery = 'INSERT INTO users (username, password) VALUES ($1, $2)';
-
   const hashedPassword = getHash(request.body.password);
-
   const inputData = [request.body.username, hashedPassword];
-  console.log(inputData);
 
   pool.query(sqlQuery, inputData, (error, result) => {
     if (error) {
@@ -93,7 +85,6 @@ app.post('/signup', (request, response) => {
       response.status(503).render('error');
       return;
     }
-
     console.log('Successfully added new user to database');
     response.render('signupsuccessful');
   });
@@ -111,7 +102,6 @@ app.get('/login', (request, response) => {
 app.post('/login', (request, response) => {
   console.log('accept POST request to log user in');
   const inputData = [request.body.username];
-
   sqlQuery = 'SELECT * FROM users WHERE username=$1';
 
   pool.query(sqlQuery, inputData, (error, result) => {
@@ -130,9 +120,9 @@ app.post('/login', (request, response) => {
     }
 
     const user = result.rows[0];
+    console.log('user details');
     console.log(user);
     const hashedUserInput = getHash(request.body.password);
-    console.log(hashedUserInput);
 
     if (user.password === hashedUserInput) {
       // create an unhashed cookie string based on user ID and salt
@@ -151,7 +141,10 @@ app.post('/login', (request, response) => {
 });
 
 app.get('/dashboard', (request, response) => {
-  response.render('dashboard');
+  const { userId, username } = request.cookies;
+  const userData = [userId, username];
+  console.log({ userData });
+  response.render('dashboard', { userData });
 });
 
 // DELETE function to log user out
@@ -161,8 +154,31 @@ app.delete('/logout', (request, response) => {
   response.clearCookie('loggedInHash');
   response.clearCookie('username');
   loggedIn = false;
-
   response.redirect('/');
+});
+
+app.get('/entry', (request, response) => {
+  console.log('request to create new entry');
+  response.render('createentry');
+});
+
+app.post('/entry', (request, response) => {
+  console.log('accept post request to create new entry');
+  console.log(request.body);
+  const { title, content } = request.body;
+  const { username, userId } = request.cookies;
+  const inputData = [userId, title, content];
+  sqlQuery = 'INSERT INTO entries (user_id, title, content) VALUES ($1, $2, $3)';
+  pool.query(sqlQuery, inputData, (error, result) => {
+    if (error) {
+      console.log('Error creating entry', error.stack);
+      response.status(503).render('error');
+      return;
+    }
+    console.log(`created entry for ${username}`);
+    console.log(result.rows);
+    response.render('entrycreated');
+  });
 });
 
 app.set('view engine', 'ejs');
