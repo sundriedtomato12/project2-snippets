@@ -4,6 +4,7 @@ import methodOverride from 'method-override';
 import cookieParser from 'cookie-parser';
 import { format } from 'date-fns';
 import jsSHA from 'jssha';
+import getHash from './functions.js';
 
 // Initialise DB connection
 const { Pool } = pg;
@@ -24,17 +25,56 @@ app.use(cookieParser());
 // This registers ?_method=PUT to be PUT requests
 app.use(methodOverride('_method'));
 
+// the SALT is a constant value.
+// In practice we would not want to store this "secret value" in plain text in our code.
+// We will learn methods later in Coding Bootcamp to obfuscate this value in our code.
+const SALT = 'i love coding';
+
 let sqlQuery = '';
+let loggedIn;
+
+// middleware function to check login authentication before proceeding
+app.use((request, response, next) => {
+  console.log('Every Request:', request.path);
+  // extract loggedInHash and userId from request cookies
+  const { loggedInHash, userId } = request.cookies;
+  console.log(loggedInHash);
+  // create new SHA object
+  // reconstruct the hashed cookie string
+  const unhashedCookieString = `${userId}-${SALT}`;
+  console.log('unhashed cookie string from middleware');
+  console.log(unhashedCookieString);
+  const hashedCookieString = getHash(unhashedCookieString);
+  console.log('hashed string from middleware');
+  console.log(hashedCookieString);
+
+  // verify if the generated hashed cookie string matches the request cookie value.
+  // if hashed value doesn't match, return 403.
+  if (hashedCookieString === loggedInHash) {
+    loggedIn = true;
+  } else {
+    loggedIn = false;
+  }
+  next();
+});
 
 // GET homepage
 app.get('/', (request, response) => {
-  response.render('homepage');
+  if (loggedIn) {
+    response.render('dashboard');
+  } else {
+    response.render('homepage');
+  }
 });
 
 // GET sign up page
 app.get('/signup', (request, response) => {
-  console.log('request to sign up as new user');
-  response.render('signup');
+  if (loggedIn) {
+    response.render('dashboard');
+  } else {
+    console.log('request to sign up as new user');
+    response.render('signup');
+  }
 });
 
 // POST to create new user
@@ -42,12 +82,7 @@ app.post('/signup', (request, response) => {
   console.log('accept POST request to sign up new user');
   sqlQuery = 'INSERT INTO users (username, password) VALUES ($1, $2)';
 
-  // initialise the SHA object
-  const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
-  // input the password from the request to the SHA object
-  shaObj.update(request.body.password);
-  // get the hashed password as output from the SHA object
-  const hashedPassword = shaObj.getHash('HEX');
+  const hashedPassword = getHash(request.body.password);
 
   const inputData = [request.body.username, hashedPassword];
   console.log(inputData);
@@ -65,8 +100,12 @@ app.post('/signup', (request, response) => {
 });
 
 app.get('/login', (request, response) => {
-  console.log('request to login');
-  response.render('login');
+  if (loggedIn) {
+    response.render('dashboard');
+  } else {
+    console.log('request to login');
+    response.render('login');
+  }
 });
 
 app.post('/login', (request, response) => {
@@ -92,16 +131,15 @@ app.post('/login', (request, response) => {
 
     const user = result.rows[0];
     console.log(user);
-
-    // initialise the SHA object
-    const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
-    // input the password from the request to the SHA object
-    shaObj.update(request.body.password);
-    // get the hashed password as output from the SHA object
-    const hashedUserInput = shaObj.getHash('HEX');
+    const hashedUserInput = getHash(request.body.password);
+    console.log(hashedUserInput);
 
     if (user.password === hashedUserInput) {
-      response.cookie('loggedIn', true);
+      // create an unhashed cookie string based on user ID and salt
+      const unhashedCookieString = `${user.id}-${SALT}`;
+      const hashedCookieString = getHash(unhashedCookieString);
+      // set the loggedInHash and userId cookies in the response
+      response.cookie('loggedInHash', hashedCookieString);
       response.cookie('username', user.username);
       response.cookie('userId', user.id);
       console.log('Login successful!');
@@ -114,6 +152,17 @@ app.post('/login', (request, response) => {
 
 app.get('/dashboard', (request, response) => {
   response.render('dashboard');
+});
+
+// DELETE function to log user out
+app.delete('/logout', (request, response) => {
+  console.log('request to log out');
+  response.clearCookie('userId');
+  response.clearCookie('loggedInHash');
+  response.clearCookie('username');
+  loggedIn = false;
+
+  response.redirect('/');
 });
 
 app.set('view engine', 'ejs');

@@ -12,14 +12,14 @@ body {
 
 nav {
   font-family: "Ubuntu";
-  background: #c8f2fa;
+  background: #fef5ed;
   height: 60px;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid #212421;
 }
 
 img.nav-logo {
-  margin: 5px 10px;
-  height: 50px;
+  margin: 1px 4px;
+  height: 58px;
 }
 
 nav ul {
@@ -34,20 +34,32 @@ nav ul li {
 }
 
 nav ul li a {
-  color: black;
+  color: #212421;
+  font-size: 17px;
+  padding: 7px 12px;
+  border-radius: 3px;
+}
+
+nav ul li form input {
+  color: #212421;
   font-size: 17px;
   padding: 7px 12px;
   border-radius: 3px;
 }
 
 nav ul li a:hover {
-  background: #94ccfa;
+  background: #d3e4cd;
+  transition: 0.5s;
+}
+
+nav ul li form input:hover {
+  background: #d3e4cd;
   transition: 0.5s;
 }
 
 .checkbtn {
   font-size: 28px;
-  color: #22577e;
+  color: #212421;
   float: right;
   line-height: 60px;
   margin-right: 38px;
@@ -64,7 +76,7 @@ label {
   vertical-align: middle;
 }
 
-@media (max-width: 430px) {
+@media (max-width: 655px) {
   .checkbtn {
     display: block;
   }
@@ -72,7 +84,7 @@ label {
     position: fixed;
     width: 100%;
     height: 100vh;
-    background: #1a374d;
+    background: #99a799;
     top: 60px;
     left: -100%;
     text-align: center;
@@ -82,7 +94,36 @@ label {
     display: block;
   }
   nav ul li a {
-    color: #c8f2fa;
+    color: #fef5ed;
+  }
+  nav ul li a:hover {
+    background: none;
+  }
+
+  #check:checked ~ ul {
+    left: 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .checkbtn {
+    display: block;
+  }
+  ul {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background: #99a799;
+    top: 60px;
+    left: -100%;
+    text-align: center;
+    transition: all 0.5s;
+  }
+  nav ul li {
+    display: block;
+  }
+  nav ul li a {
+    color: #fef5ed;
   }
   nav ul li a:hover {
     background: none;

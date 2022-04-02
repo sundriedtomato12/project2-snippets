@@ -10,7 +10,9 @@
         <li><a href="/dashboard">Dashboard</a></li>
         <li><a href="/login">My Blog</a></li>
         <li><a href="/entry">Create New Entry</a></li>
-        <li><a href="/logout">Logout</a></li>
+        <li><form action="/logout?_method=DELETE" method="POST">
+          <input type="submit" value="Log Out"/>
+        </form>
       </ul>
     </nav>
     <div class="dashboard-body">

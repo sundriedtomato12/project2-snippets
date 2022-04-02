@@ -1,9 +1,14 @@
+import jsSHA from 'jssha';
+
 /**
- * Check login status of user
- * @param {integer} userId - id of user
- * @param {string} cookie - browser cookie
+ * Function to hash input
+ * @param {string} input - input to be hashed
  */
 
-export function checkLoggedIn(userId, cookie) {
-
+export default function getHash(input) {
+// create new SHA object
+  const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+  // generate a hashed cookie string using SHA object
+  shaObj.update(input);
+  return shaObj.getHash('HEX');
 }
