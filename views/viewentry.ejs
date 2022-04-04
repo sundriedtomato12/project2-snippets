@@ -1,4 +1,4 @@
-<%-  include('header', {title: 'Snippets: Dashboard'}); -%>
+<%-  include('header', {title: `Snippets: View Note`}); -%>
   <body>
     <nav>
       <input type="checkbox" id="check" />
@@ -14,10 +14,22 @@
           <input type="submit" value="Log Out"/>
         </form>
       </ul>
-    </nav>
-    <div class="dashboard-body">
-      <div class="para-1">
-        <h1>Welcome back!</h1>
+    </nav>   
+    <div class="viewentry-body">
+      <div class="title">
+        <h1><%= data.title %></h1>
+      </div>
+      <div class="content">
+        <p><%= data.content %></p>
+      </div>
+      <div class="date-created">
+        <p>Posted on: <%= data.created_at %></p>
+      </div>
+      <div class="created-by">
+        <p>Created by: <%= data.username %></p>
+      </div>
+      <div class="links">
+        <a href="/entry/<%= data.entry_id %>/edit">Edit Entry</a>
       </div>
     </div>
   </body>

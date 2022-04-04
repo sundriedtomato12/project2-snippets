@@ -141,10 +141,7 @@ app.post('/login', (request, response) => {
 });
 
 app.get('/dashboard', (request, response) => {
-  const { userId, username } = request.cookies;
-  const userData = [userId, username];
-  console.log({ userData });
-  response.render('dashboard', { userData });
+  response.render('dashboard');
 });
 
 // DELETE function to log user out
@@ -168,16 +165,86 @@ app.post('/entry', (request, response) => {
   const { title, content } = request.body;
   const { username, userId } = request.cookies;
   const inputData = [userId, title, content];
-  sqlQuery = 'INSERT INTO entries (user_id, title, content) VALUES ($1, $2, $3)';
-  pool.query(sqlQuery, inputData, (error, result) => {
+
+  pool.query('INSERT INTO entries (user_id, title, content) VALUES ($1, $2, $3) RETURNING id', inputData, (error, result) => {
     if (error) {
       console.log('Error creating entry', error.stack);
       response.status(503).render('error');
       return;
     }
     console.log(`created entry for ${username}`);
-    console.log(result.rows);
-    response.render('entrycreated');
+    const data = result.rows[0];
+    console.log({ data });
+    response.render('entrycreated', { data });
+  });
+});
+
+app.get('/entry/:id', (request, response) => {
+  console.log('request to view note id:');
+  console.log(request.params.id);
+  const id = [request.params.id];
+  sqlQuery = 'SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at FROM users JOIN entries ON users.id = entries.user_id WHERE entries.id = $1';
+
+  pool.query(sqlQuery, id, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      response.status(503).render('error');
+      return;
+    }
+
+    if (result.rows.length <= 0) {
+      console.log('No such id!');
+    } else {
+      console.log(result.rows);
+    }
+    const data = result.rows[0];
+    const newDate = format(new Date(data.created_at), 'dd MMM yyyy');
+    data.created_at = newDate;
+    response.render('viewentry', { data });
+  });
+});
+
+// GET function to render page to edit entry by id
+app.get('/entry/:id/edit', (request, response) => {
+  console.log('request to edit note id:');
+  console.log(request.params.id);
+  const id = [request.params.id];
+  sqlQuery = 'SELECT * FROM entries WHERE id = $1';
+
+  pool.query(sqlQuery, id, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      response.status(503).render('error');
+      return;
+    }
+    if (result.rows.length <= 0) {
+      console.log('No such id!');
+    } else {
+      console.log(result.rows);
+    }
+    const data = result.rows[0];
+    response.render('editentry', { data });
+  });
+});
+
+// PUT function to edit note by id
+app.put('/entry/:id', (request, response) => {
+  console.log('request to edit entry id:');
+  console.log(request.params.id);
+  const { title, content } = request.body;
+  const inputData = [request.params.id, title, content];
+
+  sqlQuery = 'UPDATE entries SET title = $2, content = $3 WHERE id = $1';
+
+  pool.query(sqlQuery, inputData, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      response.status(503).render('error');
+      return;
+    }
+    console.log('entry edited!');
+    console.log({ inputData });
+    response.render('entryedited', { inputData });
   });
 });
 

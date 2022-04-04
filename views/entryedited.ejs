@@ -1,4 +1,4 @@
-<%-  include('header', {title: 'Snippets: Sign Up Successful'}); -%>
+<%-  include('header', {title: 'Snippets: Entry Edited'}); -%>
 <body>
   <nav>
     <input type="checkbox" id="check" />
@@ -15,10 +15,10 @@
       </form>
     </ul>
   </nav>
-<div class="entrycreated-body">
+<div class="entryedited-body">
   <div class="header">
-    <h1>Entry created!</h1>
-    <h2><a href="/entry/<%= data.id %>">Click here</a> to view your entry!</h2>
+    <h1>Entry edited!</h1>
+    <h2><a href="/entry/<%= inputData[0] %>">Click here</a> to view your entry!</h2>
   </div>
 </div>
 </body>
