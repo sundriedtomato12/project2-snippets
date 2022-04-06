@@ -141,7 +141,11 @@ app.post('/login', (request, response) => {
 });
 
 app.get('/dashboard', (request, response) => {
-  response.render('dashboard');
+  const cookiesInfo = [];
+  cookiesInfo.push(request.cookies.username);
+  console.log('cookies info');
+  console.log(cookiesInfo);
+  response.render('dashboard', { cookiesInfo });
 });
 
 // DELETE function to log user out
@@ -245,6 +249,55 @@ app.put('/entry/:id', (request, response) => {
     console.log('entry edited!');
     console.log({ inputData });
     response.render('entryedited', { inputData });
+  });
+});
+
+// DELETE function to delete entry by id
+app.delete('/entry/:id', (request, response) => {
+  console.log('request to delete entry id:');
+  console.log(request.params.id);
+  const id = [request.params.id];
+  sqlQuery = 'DELETE FROM entries WHERE id = $1';
+
+  pool.query(sqlQuery, id, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      response.status(503).render('error');
+      return;
+    }
+    console.log('entry successfully deleted');
+    response.render('entrydeleted');
+  });
+});
+
+// GET function to view blog by username
+app.get('/blog/:username', (request, response) => {
+  console.log('request to view blog of username:');
+  console.log(request.params.username);
+  const username = [request.params.username];
+  sqlQuery = 'SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at FROM users JOIN entries ON users.id = entries.user_id WHERE users.username = $1';
+
+  pool.query(sqlQuery, username, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      response.status(503).render('error');
+      return;
+    }
+    if (result.rows.length <= 0) {
+      console.log('No results!');
+    } else {
+      console.log(result.rows);
+    }
+    const data = result.rows;
+    for (let i = 0; i < data.length; i += 1) {
+      const newDate = format(new Date(data[i].created_at), 'dd MMM yyyy');
+      data[i].created_at = newDate;
+    }
+    const cookiesInfo = [];
+    cookiesInfo.push(request.cookies.username);
+    console.log('cookies info');
+    console.log(cookiesInfo);
+    response.render('viewblog', { data, cookiesInfo });
   });
 });
 
