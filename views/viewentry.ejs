@@ -30,7 +30,7 @@
       </div>
       <% if (cookiesInfo[0] === data.username) { %>
       <div class="links">
-        <a href="/entry/<%= data[i].entry_id %>/edit">Edit Entry</a>
+        <a href="/entry/<%= data.entry_id %>/edit">Edit Entry</a>
         <form action="/entry/<%= data.entry_id %>?_method=DELETE" method="POST"><input type="submit" value="Delete Note" onclick="return confirm('Are you sure you want to delete this entry?');"/></form>
       </div>
       <% } %>

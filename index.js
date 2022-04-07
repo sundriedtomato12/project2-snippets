@@ -143,9 +143,19 @@ app.post('/login', (request, response) => {
 app.get('/dashboard', (request, response) => {
   const cookiesInfo = [];
   cookiesInfo.push(request.cookies.username);
+  cookiesInfo.push(parseInt(request.cookies.userId));
   console.log('cookies info');
   console.log(cookiesInfo);
-  response.render('dashboard', { cookiesInfo });
+
+  const promise1 = pool.query('SELECT * FROM users');
+  const promise2 = pool.query(`SELECT * FROM entries WHERE user_id = ${cookiesInfo[1]}`);
+  Promise.all([promise1, promise2]).then((allResults) => {
+    const usersData = allResults[0].rows;
+    const numOfEntries = [allResults[1].rows.length];
+    response.render('dashboard', { cookiesInfo, usersData, numOfEntries });
+  }).catch((error) => {
+    console.log(error);
+  });
 });
 
 // DELETE function to log user out
@@ -187,6 +197,8 @@ app.get('/entry/:id', (request, response) => {
   console.log('request to view note id:');
   console.log(request.params.id);
   const id = [request.params.id];
+  const cookiesInfo = [];
+  cookiesInfo.push(request.cookies.username);
   sqlQuery = 'SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at FROM users JOIN entries ON users.id = entries.user_id WHERE entries.id = $1';
 
   pool.query(sqlQuery, id, (error, result) => {
@@ -204,7 +216,7 @@ app.get('/entry/:id', (request, response) => {
     const data = result.rows[0];
     const newDate = format(new Date(data.created_at), 'dd MMM yyyy');
     data.created_at = newDate;
-    response.render('viewentry', { data });
+    response.render('viewentry', { data, cookiesInfo });
   });
 });
 
