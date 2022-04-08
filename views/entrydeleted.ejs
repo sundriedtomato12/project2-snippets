@@ -8,7 +8,7 @@
     <img class="nav-logo" src="/logo-line.svg" />
     <ul>
       <li><a href="/dashboard">Dashboard</a></li>
-      <li><a href="/login">My Blog</a></li>
+      <li><a href="/blog/<%= cookiesInfo[0] %>">My Blog</a></li>
       <li><a href="/entry">Create New Entry</a></li>
       <li><form action="/logout?_method=DELETE" method="POST">
         <input type="submit" value="Log Out"/>
@@ -18,7 +18,6 @@
 <div class="entrycreated-body">
   <div class="header">
     <h1>Entry deleted successfully!</h1>
-    <h2><a href="">Click here</a> to view your blog!</h2>
   </div>
 </div>
 </body>

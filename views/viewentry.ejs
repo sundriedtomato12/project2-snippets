@@ -17,23 +17,45 @@
     </nav>   
     <div class="viewentry-body">
       <div class="title">
-        <h1><%= data.title %></h1>
+        <h1><%= entryData.title %></h1>
       </div>
       <div class="content">
-        <p><%= data.content %></p>
+        <p><%= entryData.content %></p>
       </div>
       <div class="date-created">
-        <p>Posted on: <%= data.created_at %></p>
+        <p>Posted on: <%= entryData.created_at %></p>
       </div>
       <div class="created-by">
-        <p>Created by: <%= data.username %></p>
+        <p>Created by: <%= entryData.username %></p>
       </div>
-      <% if (cookiesInfo[0] === data.username) { %>
+      <% if (cookiesInfo[0] === entryData.username) { %>
       <div class="links">
-        <a href="/entry/<%= data.entry_id %>/edit">Edit Entry</a>
-        <form action="/entry/<%= data.entry_id %>?_method=DELETE" method="POST"><input type="submit" value="Delete Note" onclick="return confirm('Are you sure you want to delete this entry?');"/></form>
+        <a href="/entry/<%= entryData.entry_id %>/edit">Edit Entry</a>
+        <form action="/entry/<%= entryData.entry_id %>?_method=DELETE" method="POST"><input type="submit" value="Delete Note" onclick="return confirm('Are you sure you want to delete this entry?');"/></form>
       </div>
       <% } %>
+      <div class="comments">
+        <div class="comments-body">
+          <h3>Comments:</h3>
+          <% for (let i = 0; i < sortedCommentsData.length; i += 1) { %>
+            <p><%= sortedCommentsData[i].comment %><br>
+              <%= sortedCommentsData[i].created_at %><br> 
+              <%= sortedCommentsData[i].username %> 
+              <% if (sortedCommentsData[i].username === cookiesInfo[0]) { %>
+                <div class="deletecomment">
+                          <form action="/entry/<%= entryData.entry_id %>/comment/<%= sortedCommentsData[i].id %>?_method=DELETE" method="POST"><input type="submit" value="Delete Comment" onclick="return confirm('Are you sure you want to delete this comment?');"/></form>
+                </div>
+                <% } %> 
+            </p>
+            <% } %> 
+        </div>
+        <form class="createcomment-form" id="createcomment-form" action="/entry/<%= entryData.entry_id %>/comment" method="POST">
+        <div class="form-group">
+          <textarea type="text" form="createcomment-form" id="comment" name="comment" rows="2" cols="50">Type comment here</textarea>
+        </div>
+        <input type="submit" value="Submit comment"/>
+        </form>
+      </div>
     </div>
   </body>
 </html>

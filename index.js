@@ -56,7 +56,7 @@ app.use((request, response, next) => {
 // GET homepage
 app.get('/', (request, response) => {
   if (loggedIn) {
-    response.render('dashboard');
+    response.redirect('/dashboard');
   } else {
     response.render('homepage');
   }
@@ -65,7 +65,7 @@ app.get('/', (request, response) => {
 // GET sign up page
 app.get('/signup', (request, response) => {
   if (loggedIn) {
-    response.render('dashboard');
+    response.redirect('/dashboard');
   } else {
     console.log('request to sign up as new user');
     response.render('signup');
@@ -92,7 +92,7 @@ app.post('/signup', (request, response) => {
 
 app.get('/login', (request, response) => {
   if (loggedIn) {
-    response.render('dashboard');
+    response.redirect('/dashboard');
   } else {
     console.log('request to login');
     response.render('login');
@@ -199,24 +199,67 @@ app.get('/entry/:id', (request, response) => {
   const id = [request.params.id];
   const cookiesInfo = [];
   cookiesInfo.push(request.cookies.username);
-  sqlQuery = 'SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at FROM users JOIN entries ON users.id = entries.user_id WHERE entries.id = $1';
 
-  pool.query(sqlQuery, id, (error, result) => {
+  const promise1 = pool.query(`SELECT * FROM comments WHERE comments.entry_id = ${id[0]}`);
+  const promise2 = pool.query(`SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at  FROM users JOIN entries ON users.id = entries.user_id WHERE entries.id = ${id[0]}`);
+  Promise.all([promise1, promise2]).then((allResults) => {
+    const commentsData = allResults[0].rows;
+    const sortedCommentsData = commentsData.sort((a, b) => a.created_at - b.created_at);
+    for (let i = 0; i < sortedCommentsData.length; i += 1) {
+      const newDate = format(new Date(sortedCommentsData[i].created_at), 'dd MMM yyyy p');
+      sortedCommentsData[i].created_at = newDate;
+    }
+    console.log('comments');
+    console.log(sortedCommentsData);
+    const entryData = allResults[1].rows[0];
+    const entryDate = format(new Date(entryData.created_at), 'dd MMM yyyy p');
+    entryData.created_at = entryDate;
+    response.render('viewentry', { cookiesInfo, sortedCommentsData, entryData });
+  }).catch((error) => {
+    console.log(error);
+  });
+});
+
+// POST function to create comment by entry id
+app.post('/entry/:id/comment', (request, response) => {
+  console.log('accept post request to create comment on entry');
+  console.log(request.body);
+  const entryId = request.params.id;
+  const { comment } = request.body;
+  const { username, userId } = request.cookies;
+  const inputData = [userId, username, entryId, comment];
+
+  pool.query('INSERT INTO comments (user_id, username, entry_id, comment) VALUES ($1, $2, $3, $4)', inputData, (error, result) => {
+    if (error) {
+      console.log('Error creating entry', error.stack);
+      response.status(503).render('error');
+      return;
+    }
+    console.log(`created entry for ${username}`);
+    const data = result.rows[0];
+    console.log('comment posted!');
+    console.log({ data });
+    response.redirect(`/entry/${entryId}`);
+  });
+});
+
+// DELETE function to delete comment by id
+app.delete('/entry/:entryid/comment/:commentid', (request, response) => {
+  console.log('request to delete comment id');
+  console.log(request.params.commentid);
+  const entryId = request.params.entryid;
+  const commentId = [request.params.commentid];
+
+  sqlQuery = 'DELETE FROM comments WHERE id = $1';
+
+  pool.query(sqlQuery, commentId, (error, result) => {
     if (error) {
       console.log('Error executing query', error.stack);
       response.status(503).render('error');
       return;
     }
-
-    if (result.rows.length <= 0) {
-      console.log('No such id!');
-    } else {
-      console.log(result.rows);
-    }
-    const data = result.rows[0];
-    const newDate = format(new Date(data.created_at), 'dd MMM yyyy');
-    data.created_at = newDate;
-    response.render('viewentry', { data, cookiesInfo });
+    console.log('entry successfully deleted');
+    response.redirect(`/entry/${entryId}`);
   });
 });
 
@@ -270,6 +313,8 @@ app.delete('/entry/:id', (request, response) => {
   console.log(request.params.id);
   const id = [request.params.id];
   sqlQuery = 'DELETE FROM entries WHERE id = $1';
+  const cookiesInfo = [];
+  cookiesInfo.push(request.cookies.username);
 
   pool.query(sqlQuery, id, (error, result) => {
     if (error) {
@@ -278,7 +323,7 @@ app.delete('/entry/:id', (request, response) => {
       return;
     }
     console.log('entry successfully deleted');
-    response.render('entrydeleted');
+    response.render('entrydeleted', { cookiesInfo });
   });
 });
 
@@ -302,7 +347,7 @@ app.get('/blog/:username', (request, response) => {
     }
     const data = result.rows;
     for (let i = 0; i < data.length; i += 1) {
-      const newDate = format(new Date(data[i].created_at), 'dd MMM yyyy');
+      const newDate = format(new Date(data[i].created_at), 'dd MMM yyyy p');
       data[i].created_at = newDate;
     }
     const cookiesInfo = [];

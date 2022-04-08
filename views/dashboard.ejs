@@ -20,7 +20,7 @@
         <h1>Welcome back, <%= cookiesInfo[0] %>!</h1>
       </div>
       <div class="user-stats">
-        <h3>You have <%= numOfEntries[0] %>  number of entries</h3>
+        <h3>You have written <%= numOfEntries[0] %> entries so far</h3>
         <a href="/blog/<%= cookiesInfo[0] %>">Click here to view your blog!</a>
       </div>
       <div class="other-blogs">
@@ -34,10 +34,12 @@
             </thead>
             <tbody>
               <% for (let i = 0; i < usersData.length; i += 1) { %>
+                <% if (usersData[i].username !== cookiesInfo[0]) { %> 
               <tr>
                 <td><%= usersData[i].username %></td>
                 <td><a href="/blog/<%= usersData[i].username %>">Click here to view blog</a></td>
               </tr>
+              <% } %> 
               <% } %>
             </tbody>
           </table>

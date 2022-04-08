@@ -25,14 +25,7 @@
       <p>Created by: <%= data[i].username %></p>
       <div class="links">
         <a href="/entry/<%= data[i].entry_id %>">View Entry</a>
-        <% if (cookiesInfo[0] === data[i].username) { %>
-        <a href="/entry/<%= data[i].entry_id %>/edit">Edit Entry</a>
-        <form action="/entry/<%= data.entry_id %>?_method=DELETE" method="POST"><input type="submit" value="Delete Note" onclick="return confirm('Are you sure you want to delete this entry?');"/></form>
       </div>
-      <% } %>
-    </div>
-    <div class="comments">
-      Comments will go here
     </div>
   </div>
   <% } %>
