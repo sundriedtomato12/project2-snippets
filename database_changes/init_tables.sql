@@ -33,9 +33,3 @@ CREATE TABLE IF NOT EXISTS entry_tags (
   entry_id INT,
   tag_id INT
 );
-
-CREATE TABLE IF NOT EXISTS entry_comments (
-  id SERIAL PRIMARY KEY,
-  entry_id INT,
-  comment_id INT
-);

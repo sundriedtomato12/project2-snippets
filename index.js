@@ -37,7 +37,7 @@ let loggedIn;
 app.use((request, response, next) => {
   console.log('Every Request:', request.path);
   // extract loggedInHash and userId from request cookies
-  const { loggedInHash, userId } = request.cookies;
+  const { loggedInHash, userId, username } = request.cookies;
   console.log(loggedInHash);
   // create new SHA object
   // reconstruct the hashed cookie string
@@ -47,6 +47,7 @@ app.use((request, response, next) => {
   // if hashed value doesn't match, return 403.
   if (hashedCookieString === loggedInHash) {
     loggedIn = true;
+    app.locals.username = username;
   } else {
     loggedIn = false;
   }
@@ -141,21 +142,20 @@ app.post('/login', (request, response) => {
 });
 
 app.get('/dashboard', (request, response) => {
-  const cookiesInfo = [];
-  cookiesInfo.push(request.cookies.username);
-  cookiesInfo.push(parseInt(request.cookies.userId));
-  console.log('cookies info');
-  console.log(cookiesInfo);
-
-  const promise1 = pool.query('SELECT * FROM users');
-  const promise2 = pool.query(`SELECT * FROM entries WHERE user_id = ${cookiesInfo[1]}`);
-  Promise.all([promise1, promise2]).then((allResults) => {
-    const usersData = allResults[0].rows;
-    const numOfEntries = [allResults[1].rows.length];
-    response.render('dashboard', { cookiesInfo, usersData, numOfEntries });
-  }).catch((error) => {
-    console.log(error);
-  });
+  if (!loggedIn) {
+    response.redirect('/');
+  } else {
+    const userId = [parseInt(request.cookies.userId)];
+    const promise1 = pool.query('SELECT * FROM users');
+    const promise2 = pool.query('SELECT * FROM entries WHERE user_id = $1', userId);
+    Promise.all([promise1, promise2]).then((allResults) => {
+      const usersData = allResults[0].rows;
+      const numOfEntries = [allResults[1].rows.length];
+      response.render('dashboard', { usersData, numOfEntries });
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
 });
 
 // DELETE function to log user out
@@ -169,8 +169,12 @@ app.delete('/logout', (request, response) => {
 });
 
 app.get('/entry', (request, response) => {
-  console.log('request to create new entry');
-  response.render('createentry');
+  if (!loggedIn) {
+    response.redirect('/');
+  } else {
+    console.log('request to create new entry');
+    response.render('createentry');
+  }
 });
 
 app.post('/entry', (request, response) => {
@@ -194,30 +198,31 @@ app.post('/entry', (request, response) => {
 });
 
 app.get('/entry/:id', (request, response) => {
-  console.log('request to view note id:');
-  console.log(request.params.id);
-  const id = [request.params.id];
-  const cookiesInfo = [];
-  cookiesInfo.push(request.cookies.username);
-
-  const promise1 = pool.query(`SELECT * FROM comments WHERE comments.entry_id = ${id[0]}`);
-  const promise2 = pool.query(`SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at  FROM users JOIN entries ON users.id = entries.user_id WHERE entries.id = ${id[0]}`);
-  Promise.all([promise1, promise2]).then((allResults) => {
-    const commentsData = allResults[0].rows;
-    const sortedCommentsData = commentsData.sort((a, b) => a.created_at - b.created_at);
-    for (let i = 0; i < sortedCommentsData.length; i += 1) {
-      const newDate = format(new Date(sortedCommentsData[i].created_at), 'dd MMM yyyy p');
-      sortedCommentsData[i].created_at = newDate;
-    }
-    console.log('comments');
-    console.log(sortedCommentsData);
-    const entryData = allResults[1].rows[0];
-    const entryDate = format(new Date(entryData.created_at), 'dd MMM yyyy p');
-    entryData.created_at = entryDate;
-    response.render('viewentry', { cookiesInfo, sortedCommentsData, entryData });
-  }).catch((error) => {
-    console.log(error);
-  });
+  if (!loggedIn) {
+    response.redirect('/');
+  } else {
+    console.log('request to view note id:');
+    console.log(request.params.id);
+    const id = [request.params.id];
+    const promise1 = pool.query('SELECT * FROM comments WHERE comments.entry_id = $1', id);
+    const promise2 = pool.query('SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at  FROM users JOIN entries ON users.id = entries.user_id WHERE entries.id = $1', id);
+    Promise.all([promise1, promise2]).then((allResults) => {
+      const commentsData = allResults[0].rows;
+      const sortedCommentsData = commentsData.sort((a, b) => a.created_at - b.created_at);
+      for (let i = 0; i < sortedCommentsData.length; i += 1) {
+        const newDate = format(new Date(sortedCommentsData[i].created_at), 'dd MMM yyyy p');
+        sortedCommentsData[i].created_at = newDate;
+      }
+      console.log('comments');
+      console.log(sortedCommentsData);
+      const entryData = allResults[1].rows[0];
+      const entryDate = format(new Date(entryData.created_at), 'dd MMM yyyy p');
+      entryData.created_at = entryDate;
+      response.render('viewentry', { sortedCommentsData, entryData });
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
 });
 
 // POST function to create comment by entry id
@@ -265,25 +270,29 @@ app.delete('/entry/:entryid/comment/:commentid', (request, response) => {
 
 // GET function to render page to edit entry by id
 app.get('/entry/:id/edit', (request, response) => {
-  console.log('request to edit note id:');
-  console.log(request.params.id);
-  const id = [request.params.id];
-  sqlQuery = 'SELECT * FROM entries WHERE id = $1';
+  if (!loggedIn) {
+    response.redirect('/');
+  } else {
+    console.log('request to edit note id:');
+    console.log(request.params.id);
+    const id = [request.params.id];
+    sqlQuery = 'SELECT * FROM entries WHERE id = $1';
 
-  pool.query(sqlQuery, id, (error, result) => {
-    if (error) {
-      console.log('Error executing query', error.stack);
-      response.status(503).render('error');
-      return;
-    }
-    if (result.rows.length <= 0) {
-      console.log('No such id!');
-    } else {
-      console.log(result.rows);
-    }
-    const data = result.rows[0];
-    response.render('editentry', { data });
-  });
+    pool.query(sqlQuery, id, (error, result) => {
+      if (error) {
+        console.log('Error executing query', error.stack);
+        response.status(503).render('error');
+        return;
+      }
+      if (result.rows.length <= 0) {
+        console.log('No such id!');
+      } else {
+        console.log(result.rows);
+      }
+      const data = result.rows[0];
+      response.render('editentry', { data });
+    });
+  }
 });
 
 // PUT function to edit note by id
@@ -313,8 +322,6 @@ app.delete('/entry/:id', (request, response) => {
   console.log(request.params.id);
   const id = [request.params.id];
   sqlQuery = 'DELETE FROM entries WHERE id = $1';
-  const cookiesInfo = [];
-  cookiesInfo.push(request.cookies.username);
 
   pool.query(sqlQuery, id, (error, result) => {
     if (error) {
@@ -323,39 +330,40 @@ app.delete('/entry/:id', (request, response) => {
       return;
     }
     console.log('entry successfully deleted');
-    response.render('entrydeleted', { cookiesInfo });
+    response.render('entrydeleted');
   });
 });
 
 // GET function to view blog by username
 app.get('/blog/:username', (request, response) => {
-  console.log('request to view blog of username:');
-  console.log(request.params.username);
-  const username = [request.params.username];
-  sqlQuery = 'SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at FROM users JOIN entries ON users.id = entries.user_id WHERE users.username = $1';
+  if (!loggedIn) {
+    response.redirect('/');
+  } else {
+    console.log('request to view blog of username:');
+    console.log(request.params.username);
+    const username = [request.params.username];
+    sqlQuery = 'SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at FROM users JOIN entries ON users.id = entries.user_id WHERE users.username = $1';
 
-  pool.query(sqlQuery, username, (error, result) => {
-    if (error) {
-      console.log('Error executing query', error.stack);
-      response.status(503).render('error');
-      return;
-    }
-    if (result.rows.length <= 0) {
-      console.log('No results!');
-    } else {
-      console.log(result.rows);
-    }
-    const data = result.rows;
-    for (let i = 0; i < data.length; i += 1) {
-      const newDate = format(new Date(data[i].created_at), 'dd MMM yyyy p');
-      data[i].created_at = newDate;
-    }
-    const cookiesInfo = [];
-    cookiesInfo.push(request.cookies.username);
-    console.log('cookies info');
-    console.log(cookiesInfo);
-    response.render('viewblog', { data, cookiesInfo });
-  });
+    pool.query(sqlQuery, username, (error, result) => {
+      if (error) {
+        console.log('Error executing query', error.stack);
+        response.status(503).render('error');
+        return;
+      }
+      if (result.rows.length <= 0) {
+        console.log('No results!');
+      } else {
+        console.log(result.rows);
+      }
+      const data = result.rows;
+      for (let i = 0; i < data.length; i += 1) {
+        const newDate = format(new Date(data[i].created_at), 'dd MMM yyyy p');
+        data[i].created_at = newDate;
+      }
+
+      response.render('viewblog', { data });
+    });
+  }
 });
 
 app.set('view engine', 'ejs');

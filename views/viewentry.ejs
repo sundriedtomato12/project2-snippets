@@ -8,7 +8,7 @@
       <img class="nav-logo" src="/logo-line.svg" />
       <ul>
         <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/login">My Blog</a></li>
+        <li><a href="/blog/<%= username %> ">My Blog</a></li>
         <li><a href="/entry">Create New Entry</a></li>
         <li><form action="/logout?_method=DELETE" method="POST">
           <input type="submit" value="Log Out"/>
@@ -28,10 +28,10 @@
       <div class="created-by">
         <p>Created by: <%= entryData.username %></p>
       </div>
-      <% if (cookiesInfo[0] === entryData.username) { %>
+      <% if (username === entryData.username) { %>
       <div class="links">
         <a href="/entry/<%= entryData.entry_id %>/edit">Edit Entry</a>
-        <form action="/entry/<%= entryData.entry_id %>?_method=DELETE" method="POST"><input type="submit" value="Delete Note" onclick="return confirm('Are you sure you want to delete this entry?');"/></form>
+        <form action="/entry/<%= entryData.entry_id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this entry?');"><input type="submit" value="Delete Entry"/></form>
       </div>
       <% } %>
       <div class="comments">
@@ -41,9 +41,9 @@
             <p><%= sortedCommentsData[i].comment %><br>
               <%= sortedCommentsData[i].created_at %><br> 
               <%= sortedCommentsData[i].username %> 
-              <% if (sortedCommentsData[i].username === cookiesInfo[0]) { %>
+              <% if (sortedCommentsData[i].username === username) { %>
                 <div class="deletecomment">
-                          <form action="/entry/<%= entryData.entry_id %>/comment/<%= sortedCommentsData[i].id %>?_method=DELETE" method="POST"><input type="submit" value="Delete Comment" onclick="return confirm('Are you sure you want to delete this comment?');"/></form>
+                          <form action="/entry/<%= entryData.entry_id %>/comment/<%= sortedCommentsData[i].id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this comment?');"><input type="submit" value="Delete Comment"/></form>
                 </div>
                 <% } %> 
             </p>
