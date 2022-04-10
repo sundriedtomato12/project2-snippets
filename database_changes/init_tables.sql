@@ -13,12 +13,6 @@ CREATE TABLE IF NOT EXISTS entries (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS tags (
-  id SERIAL PRIMARY KEY,
-  tag_name TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
 CREATE TABLE IF NOT EXISTS comments (
   id SERIAL PRIMARY KEY,
   user_id INT,
@@ -26,10 +20,4 @@ CREATE TABLE IF NOT EXISTS comments (
   entry_id INT,
   comment TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS entry_tags (
-  id SERIAL PRIMARY KEY,
-  entry_id INT,
-  tag_id INT
 );
