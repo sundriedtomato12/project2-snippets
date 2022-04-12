@@ -21,3 +21,10 @@ CREATE TABLE IF NOT EXISTS comments (
   comment TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS favourites (
+  id SERIAL PRIMARY KEY,
+  user_id INT,
+  entry_id INT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

@@ -36,7 +36,7 @@ nav ul li {
 
 nav ul li a {
   color: #212421;
-  font-size: 17px;
+  font-size: 18px;
   padding: 7px 12px;
   border-radius: 3px;
 }
@@ -87,18 +87,23 @@ label {
 
 div.home-body div.para-1 {
   display: flex;
-  height: 160px;
+  height: 180px;
+  width: 100%;
   justify-content: center;
   align-items: center;
 }
 
-div.home-body div.para-1 h2 {
+div.home-body div.para-1 h1 {
   display: inline-block;
+  font-size: max(2.6vw, 33px);
 }
 
 div.home-body div.para-1 img {
   display: inline-block;
-  height: 150px;
+  width: 24%;
+  min-width: 180px;
+  max-width: 207px;
+  height: auto;
 }
 
 div.home-body div.para-2 {
@@ -193,6 +198,42 @@ form.signup-form div.submit-button {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/** Dashboard */
+
+div.dashboard-body {
+  margin: 12px;
+}
+
+div.dashboard-body div.welcome-message {
+  font-size: max(1.3vw, 16px);
+  margin-bottom: 15px;
+}
+
+div.dashboard-body div.user-stats {
+  font-size: max(1.4vw, 18px);
+  line-height: 32px;
+  margin-bottom: 15px;
+}
+
+div.dashboard-body div.other-blogs h3 {
+  font-size: max(1.4vw, 20px);
+  line-height: 32px;
+  margin-bottom: 13px;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+table,
+th,
+tr,
+td {
+  border: #212421 1px solid;
+  border-collapse: collapse;
+  padding: 5px;
+  text-align: left;
+  font-size: max(1.2vw, 17px);
 }
 
 @media (max-width: 635px) {
