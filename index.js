@@ -83,7 +83,7 @@ app.post('/signup', (request, response) => {
   pool.query(sqlQuery, inputData, (error, result) => {
     if (error) {
       console.log('Error executing query', error.stack);
-      response.status(503).render('error');
+      response.status(503).render('error1');
       return;
     }
     console.log('Successfully added new user to database');
@@ -108,7 +108,7 @@ app.post('/login', (request, response) => {
   pool.query(sqlQuery, inputData, (error, result) => {
     if (error) {
       console.log('Error executing query', error.stack);
-      response.status(503).render('error');
+      response.status(503).render('error1');
       return;
     }
     if (result.rows.length === 0) {
@@ -116,7 +116,7 @@ app.post('/login', (request, response) => {
       // error for password and user are the same
       // don't tell the user which error they got for security reasons
       // otherwise they can guess if a person is a user of a given service
-      response.status(403).render('error');
+      response.status(403).render('error1');
       return;
     }
 
@@ -136,7 +136,7 @@ app.post('/login', (request, response) => {
       console.log('Login successful!');
       response.redirect('/dashboard');
     } else {
-      response.status(403).render('error');
+      response.status(403).render('error1');
     }
   });
 });
@@ -154,6 +154,7 @@ app.get('/dashboard', (request, response) => {
       response.render('dashboard', { usersData, numOfEntries });
     }).catch((error) => {
       console.log(error);
+      response.render('error2');
     });
   }
 });
@@ -187,7 +188,7 @@ app.post('/entry', (request, response) => {
   pool.query('INSERT INTO entries (user_id, title, content) VALUES ($1, $2, $3) RETURNING id', inputData, (error, result) => {
     if (error) {
       console.log('Error creating entry', error.stack);
-      response.status(503).render('error');
+      response.status(503).render('error2');
       return;
     }
     console.log(`created entry for ${username}`);
@@ -201,12 +202,14 @@ app.get('/entry/:id', (request, response) => {
   if (!loggedIn) {
     response.redirect('/');
   } else {
-    console.log('request to view note id:');
+    console.log('request to view entry id:');
     console.log(request.params.id);
     const id = [request.params.id];
+    const data = [request.params.id, request.cookies.userId];
     const promise1 = pool.query('SELECT * FROM comments WHERE comments.entry_id = $1', id);
     const promise2 = pool.query('SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at  FROM users JOIN entries ON users.id = entries.user_id WHERE entries.id = $1', id);
-    Promise.all([promise1, promise2]).then((allResults) => {
+    const promise3 = pool.query('SELECT * from favourites where entry_id = $1 AND user_id = $2', data);
+    Promise.all([promise1, promise2, promise3]).then((allResults) => {
       const commentsData = allResults[0].rows;
       const sortedCommentsData = commentsData.sort((a, b) => a.created_at - b.created_at);
       for (let i = 0; i < sortedCommentsData.length; i += 1) {
@@ -218,9 +221,17 @@ app.get('/entry/:id', (request, response) => {
       const entryData = allResults[1].rows[0];
       const entryDate = format(new Date(entryData.created_at), 'dd MMM yyyy p');
       entryData.created_at = entryDate;
-      response.render('viewentry', { sortedCommentsData, entryData });
+      const favouritesData = allResults[2].rows;
+      console.log('favourites data');
+      console.log(favouritesData);
+      const userId = [request.cookies.userId];
+      console.log(userId);
+      response.render('viewentry', {
+        sortedCommentsData, entryData, favouritesData, userId,
+      });
     }).catch((error) => {
       console.log(error);
+      response.status(503).render('error2');
     });
   }
 });
@@ -237,7 +248,7 @@ app.post('/entry/:id/comment', (request, response) => {
   pool.query('INSERT INTO comments (user_id, username, entry_id, comment) VALUES ($1, $2, $3, $4)', inputData, (error, result) => {
     if (error) {
       console.log('Error creating entry', error.stack);
-      response.status(503).render('error');
+      response.status(503).render('error2');
       return;
     }
     console.log(`created entry for ${username}`);
@@ -260,7 +271,7 @@ app.delete('/entry/:entryid/comment/:commentid', (request, response) => {
   pool.query(sqlQuery, commentId, (error, result) => {
     if (error) {
       console.log('Error executing query', error.stack);
-      response.status(503).render('error');
+      response.status(503).render('error2');
       return;
     }
     console.log('entry successfully deleted');
@@ -281,7 +292,7 @@ app.get('/entry/:id/edit', (request, response) => {
     pool.query(sqlQuery, id, (error, result) => {
       if (error) {
         console.log('Error executing query', error.stack);
-        response.status(503).render('error');
+        response.status(503).render('error2');
         return;
       }
       if (result.rows.length <= 0) {
@@ -307,12 +318,48 @@ app.put('/entry/:id', (request, response) => {
   pool.query(sqlQuery, inputData, (error, result) => {
     if (error) {
       console.log('Error executing query', error.stack);
-      response.status(503).render('error');
+      response.status(503).render('error2');
       return;
     }
     console.log('entry edited!');
     console.log({ inputData });
     response.render('entryedited', { inputData });
+  });
+});
+
+app.post('/entry/:id/favourites', (request, response) => {
+  console.log('request to add entry id:');
+  console.log(request.params.id);
+  console.log('to favourites');
+  const inputData = [request.cookies.userId, request.params.id];
+  sqlQuery = 'INSERT INTO favourites (user_id, entry_id) VALUES ($1, $2)';
+
+  pool.query(sqlQuery, inputData, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      response.status(503).render('error2');
+      return;
+    }
+    console.log('added to favourites!');
+    response.redirect(`/entry/${request.params.id}`);
+  });
+});
+
+app.post('/entry/:id/removefromfavourites', (request, response) => {
+  console.log('request to add entry id:');
+  console.log(request.params.id);
+  console.log('to favourites');
+  const inputData = [request.cookies.userId, request.params.id];
+  sqlQuery = 'DELETE FROM favourites WHERE user_id = $1 AND entry_id = $2';
+
+  pool.query(sqlQuery, inputData, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      response.status(503).render('error2');
+      return;
+    }
+    console.log('removed from favourites!');
+    response.redirect(`/entry/${request.params.id}`);
   });
 });
 
@@ -326,7 +373,7 @@ app.delete('/entry/:id', (request, response) => {
   pool.query(sqlQuery, id, (error, result) => {
     if (error) {
       console.log('Error executing query', error.stack);
-      response.status(503).render('error');
+      response.status(503).render('error2');
       return;
     }
     console.log('entry successfully deleted');
@@ -347,7 +394,7 @@ app.get('/blog/:username', (request, response) => {
     pool.query(sqlQuery, username, (error, result) => {
       if (error) {
         console.log('Error executing query', error.stack);
-        response.status(503).render('error');
+        response.status(503).render('error2');
         return;
       }
       if (result.rows.length <= 0) {
@@ -362,6 +409,32 @@ app.get('/blog/:username', (request, response) => {
       }
 
       response.render('viewblog', { data });
+    });
+  }
+});
+
+app.get('/favourites', (request, response) => {
+  if (!loggedIn) {
+    response.redirect('/');
+  } else {
+    console.log('request to view list of favourited posts');
+    const userId = [request.cookies.userId];
+    sqlQuery = 'SELECT entry_id FROM favourites WHERE user_id = $1';
+
+    pool.query(sqlQuery, userId).then((result) => {
+      const data = [];
+      for (let i = 0; i < result.rows.length; i += 1) {
+        data.push(result.rows[i].entry_id);
+      }
+      const joined = [data.join(', ')];
+      sqlQuery = `SELECT * FROM entries WHERE id IN (${joined})`;
+      return pool.query(sqlQuery);
+    }).then((result) => {
+      const favouritesData = result.rows;
+      response.render('favourites', { favouritesData });
+    }).catch((error) => {
+      console.log(error);
+      response.status(503).render('error2');
     });
   }
 });
