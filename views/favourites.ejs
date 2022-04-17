@@ -3,16 +3,18 @@
 include('navbar2'); -%>  
 <body>
     <div class="favourites-body">
-      <div class="welcome-message">
-        <h1>Here's a list of your favourite entries by their title &#11088;</h1>
-        <h2>Click to view them!</h2>
+      <div class="header">
+        <h1>Favourites &#11088;</h1>
+      </div>
+      <div class="links">
         <% if (favouritesData.length === 0) { %>
           <h3>You have not favourited any entry!</h3>
           <% } else { %>  
         <% for (let i = 0; i < favouritesData.length; i += 1) { %>
-          <a href="/entry/<%= favouritesData[i].id %>"><%= favouritesData[i].title %> </a><br>
+          <h3><a href="/entry/<%= favouritesData[i].id %>"><%= favouritesData[i].title %></a></h3><br>
           <% } %> 
-          <% } %> 
+          <% } %>
+        </div>
       </div>
     </div>
   </body>

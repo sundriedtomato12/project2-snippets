@@ -173,6 +173,7 @@ label {
 div.signup-body div.header {
   display: flex;
   height: 70px;
+  width: 100%;
   justify-content: center;
   align-items: center;
 }
@@ -237,6 +238,37 @@ td {
   font-size: max(1.2vw, 17px);
 }
 
+/** Sign Up Successful Page */
+
+div.signupsuccessful-body div.header {
+  margin: 12px;
+  text-align: center;
+}
+
+/** View Blog Page if user has no entries */
+
+div.viewblog-body div.header {
+  display: block;
+  margin: 12px;
+}
+
+/** Favourites Page */
+
+div.favourites-body div.header {
+  display: block;
+  margin: 12px;
+}
+
+div.favourites-body div.links {
+  display: block;
+  margin-left: 12px;
+}
+
+div.favourites-body div.links h3 {
+  display: block;
+  margin-bottom: -10px;
+}
+
 @media (max-width: 790px) {
   .checkbtn {
     display: block;
@@ -262,33 +294,10 @@ td {
     background: none;
   }
 
-  #check:checked ~ ul {
-    left: 0;
-  }
-}
-
-@media (max-width: 430px) {
-  .checkbtn {
-    display: block;
-    width: 10px;
-  }
-  ul {
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    background: #99a799;
-    top: 60px;
-    left: -100%;
-    text-align: center;
-    transition: all 0.5s;
-  }
-  nav ul li {
-    display: block;
-  }
-  nav ul li a {
+  nav ul li form input[type="submit"] {
     color: #fef5ed;
   }
-  nav ul li a:hover {
+  nav ul li form input[type="submit"]:hover {
     background: none;
   }
 

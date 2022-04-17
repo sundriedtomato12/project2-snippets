@@ -3,6 +3,14 @@
 include('navbar2'); -%>  
 <body>
 <div class="viewblog-body">
+  <div class="header">
+    <h1>Welcome to <%= username[0] %>'s blog!</h1>
+  </div>
+  <% if (data.length === 0) { %> 
+    <div class="header">
+      <h1>This user has no entries &#128517</h1>
+    </div>
+    <% } else if (data.length !== 0) { %> 
   <% for (let i = 0; i < data.length; i += 1) { %>
   <div class="container">
     <div class="entry">
@@ -15,6 +23,7 @@ include('navbar2'); -%>
       </div>
     </div>
   </div>
+  <% } %> 
   <% } %>
 </div>
 </body>

@@ -408,7 +408,7 @@ app.get('/blog/:username', (request, response) => {
         data[i].created_at = newDate;
       }
 
-      response.render('viewblog', { data });
+      response.render('viewblog', { data, username });
     });
   }
 });
