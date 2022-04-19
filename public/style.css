@@ -55,12 +55,12 @@ nav ul li form input[type="submit"] {
 }
 
 nav ul li a:hover {
-  background: #d3e4cd;
+  background: #fddbbe;
   transition: 0.5s;
 }
 
 nav ul li form input[type="submit"]:hover {
-  background: #d3e4cd;
+  background: #fddbbe;
   transition: 0.5s;
 }
 
@@ -84,6 +84,10 @@ label {
 }
 
 /** Homepage */
+
+div.home-body {
+  margin: 0px 10px 0px 10px;
+}
 
 div.home-body div.para-1 {
   display: flex;
@@ -162,6 +166,13 @@ form.login-form input[type="submit"] {
   padding: 5px 8px 5px 8px;
 }
 
+form.login-form input[type="submit"]:hover {
+  background-color: #fef5ed;
+  border-radius: 2px;
+  border: 1px solid black;
+  padding: 6px 9px 6px 9px;
+}
+
 label {
   width: 90px;
   display: inline-block;
@@ -196,6 +207,13 @@ form.signup-form input[type="submit"] {
   padding: 5px 8px 5px 8px;
 }
 
+form.signup-form input[type="submit"]:hover {
+  background-color: #fef5ed;
+  border-radius: 2px;
+  border: 1px solid black;
+  padding: 6px 9px 6px 9px;
+}
+
 form.signup-form div.submit-button {
   display: flex;
   justify-content: center;
@@ -219,23 +237,28 @@ div.dashboard-body div.user-stats {
   margin-bottom: 15px;
 }
 
-div.dashboard-body div.other-blogs h3 {
+div.dashboard-body div.other-blogs h3.header {
   font-size: max(1.4vw, 20px);
   line-height: 32px;
-  margin-bottom: 13px;
+  margin-bottom: 5px;
   text-decoration: underline;
   text-underline-position: under;
 }
 
-table,
-th,
-tr,
-td {
-  border: #212421 1px solid;
-  border-collapse: collapse;
-  padding: 5px;
-  text-align: left;
-  font-size: max(1.2vw, 17px);
+div.dashboard-body div.other-blogs h3.links {
+  color: black;
+  font-size: max(1.4vw, 20px);
+  margin: 5px 0px 5px 0px;
+  width: fit-content;
+  padding: 3px;
+}
+
+div.dashboard-body div.other-blogs h3.links:hover {
+  background-color: #fef5ed;
+  border: 1px black solid;
+  border-radius: 2px;
+  transition: 0s;
+  padding: 2px;
 }
 
 /** Sign Up Successful Page */
@@ -252,6 +275,151 @@ div.viewblog-body div.header {
   margin: 12px;
 }
 
+/** View Blog Page if user has entries*/
+
+div.viewblog-body div.container {
+  display: block;
+  padding: 7px;
+  margin: 12px 12px 16px 12px;
+  border: 1px black solid;
+  border-radius: 3px;
+}
+
+div.viewblog-body div.container div.entry h2,
+div.viewblog-body div.container div.entry h3 {
+  margin-bottom: 5px;
+}
+div.viewblog-body div.container div.last-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+div.viewblog-body div.container div.last-line p,
+div.viewblog-body div.container div.last-line a {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+div.viewblog-body div.container div.last-line a button {
+  height: 100%;
+  padding: 1px;
+}
+
+div.viewblog-body div.container div.last-line a button:hover {
+  transition: 0s;
+  background-color: #fef5ed;
+  border: 1px solid black;
+  border-radius: 2px;
+  padding: 2px;
+}
+
+/** View Entry Page */
+
+div.viewentry-body {
+  display: block;
+}
+
+div.viewentry-body p {
+  font-weight: bold;
+}
+
+div.viewentry-body input,
+div.viewentry-body div.links a button {
+  font-family: Ubuntu;
+  padding: 1px;
+  height: 100%;
+}
+
+div.viewentry-body div.entry {
+  border: 1px black solid;
+  border-radius: 3px;
+  margin: 12px;
+  padding: 6px;
+}
+
+div.viewentry-body div.links {
+  display: flex;
+  justify-content: left;
+}
+
+div.viewentry-body div.links a,
+div.viewentry-body div.links input,
+div.viewentry-body div.links div.favourites-button {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+div.viewentry-body div.links a button:hover,
+div.viewentry-body div.links input:hover,
+div.viewentry-body div.links div.favourites-button input:hover,
+div.viewentry-body div.comments div.createcomment-body input:hover,
+div.viewentry-body
+  div.comments
+  div.comments-body
+  div.comment
+  div.last-line
+  input:hover {
+  transition: 0s;
+  background-color: #fef5ed;
+  border: 1px solid black;
+  border-radius: 2px;
+  padding: 2px;
+}
+
+div.viewentry-body div.title,
+div.viewentry-body div.content,
+div.viewentry-body div.date-created,
+div.viewentry-body div.created-by {
+  margin-bottom: 5px;
+}
+
+div.viewentry-body div.comments {
+  margin: 12px;
+  padding: 7px;
+  border: 1px black solid;
+  border-radius: 3px;
+}
+
+div.viewentry-body div.comments h2 {
+  margin: 0px 0px 5px 0px;
+}
+
+div.viewentry-body div.comments div.comments-body div.comment {
+  border: 1px black solid;
+  border-radius: 3px;
+  padding: 7px;
+  margin-top: 10px;
+}
+
+div.viewentry-body div.comments div.comments-body div.comment div.last-line {
+  display: flex;
+  justify-content: space-between;
+}
+
+div.viewentry-body div.comments div.comments-body div.comment div.last-line p,
+div.viewentry-body
+  div.comments
+  div.comments-body
+  div.comment
+  div.last-line
+  input {
+  display: inline-block;
+}
+
+div.viewentry-body div.comments div.createcomment-body {
+  margin-top: 12px;
+}
+
+div.viewentry-body div.comments div.createcomment-body div.form-group textarea {
+  font-family: Ubuntu;
+  padding: 5px;
+  width: 100%;
+}
+
+div.viewentry-body div.comments div.createcomment-body input {
+  margin-top: 5px;
+}
+
 /** Favourites Page */
 
 div.favourites-body div.header {
@@ -265,8 +433,111 @@ div.favourites-body div.links {
 }
 
 div.favourites-body div.links h3 {
+  color: black;
   display: block;
   margin-bottom: -10px;
+}
+
+div.favourites-body a {
+  padding: 2px;
+}
+
+div.favourites-body a:hover {
+  transition: 0s;
+  background-color: #fef5ed;
+  border: 1px black solid;
+  border-radius: 2px;
+  padding: 1px;
+}
+/** Edit Entry Page */
+
+div.editentry-body {
+  margin: 12px;
+  display: block;
+}
+
+div.editentry-body input#title,
+div.editentry-body textarea {
+  margin-top: 7px;
+  font-size: medium;
+  font-family: Ubuntu;
+  padding: 1px;
+  width: 100%;
+}
+
+div.editentry-body label {
+  margin-top: 5px;
+  font-size: large;
+}
+
+div.editentry-body input#submit {
+  margin: 5px 0px 5px 0px;
+  padding: 1px;
+}
+
+div.editentry-body input#submit:hover {
+  transition: 0s;
+  background-color: #fef5ed;
+  border: 1px black solid;
+  border-radius: 2px;
+  padding: 2px;
+}
+
+/** Create Entry Page */
+
+div.createentry-body {
+  margin: 12px;
+  display: block;
+}
+
+div.createentry-body input#title,
+div.createentry-body textarea {
+  margin-top: 7px;
+  font-size: medium;
+  font-family: Ubuntu;
+  padding: 2px;
+  width: 100%;
+}
+
+div.createentry-body label {
+  margin-top: 5px;
+  font-size: large;
+}
+
+div.createentry-body input#submit {
+  margin: 5px 0px 5px 0px;
+  padding: 1px;
+}
+div.createentry-body input#submit:hover {
+  transition: 0s;
+  background-color: #fef5ed;
+  border: 1px black solid;
+  border-radius: 2px;
+  padding: 2px;
+}
+
+/** Entry Edited, Entry Created, Entry Deleted Page */
+
+div.entryedited-body,
+div.entrycreated-body,
+div.entrydeleted-body {
+  margin: 12px;
+  text-align: center;
+}
+
+div.entryedited-body a,
+div.entrycreated-body a {
+  color: black;
+  padding: 2px;
+}
+
+div.entryedited-body a:hover,
+div.entrycreated-body a:hover {
+  background-color: #fef5ed;
+  border: 1px black solid;
+  border-radius: 2px;
+  transition: 0s;
+  padding: 1px;
 }
 
 @media (max-width: 790px) {
@@ -278,7 +549,7 @@ div.favourites-body div.links h3 {
     position: fixed;
     width: 100%;
     height: 100vh;
-    background: #99a799;
+    background: #ffd5b1;
     top: 60px;
     left: -100%;
     text-align: center;
@@ -288,17 +559,21 @@ div.favourites-body div.links h3 {
     display: block;
   }
   nav ul li a {
-    color: #fef5ed;
+    color: black;
   }
   nav ul li a:hover {
     background: none;
+    font-weight: bold;
+    transition: 0.1s;
   }
 
   nav ul li form input[type="submit"] {
-    color: #fef5ed;
+    color: black;
   }
   nav ul li form input[type="submit"]:hover {
     background: none;
+    font-weight: bold;
+    transition: 0.1s;
   }
 
   #check:checked ~ ul {

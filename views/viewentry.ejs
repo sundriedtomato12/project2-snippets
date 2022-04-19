@@ -3,54 +3,59 @@
 include('navbar2'); -%>  
 <body> 
     <div class="viewentry-body">
-      <div class="title">
-        <h1><%= entryData.title %></h1>
+      <div class="entry">
+        <div class="title">
+          <h1><%= entryData.title %></h1>
+        </div>
+        <div class="content">
+          <h2><%= entryData.content %></h2>
+        </div>
+        <div class="date-created">
+          <p>Posted on: <%= entryData.created_at %></p>
+        </div>
+        <div class="created-by">
+          <p>Written by: <%= entryData.username %></p>
+        </div>
+        <div class="links">
+        <% if (username === entryData.username) { %>
+          <a href="/entry/<%= entryData.entry_id %>/edit"><button type="button">&#x1f58a; Edit Entry</button></a>
+          <form action="/entry/<%= entryData.entry_id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this entry?');"><input type="submit" value="&#x1f5d1; Delete Entry"/></form>
+          <% } %>
+          <div class="favourites-button">
+            <% if (favouritesData.length > 0) { %>
+              <form class="removefromfavourites-form" id="removefromfavourites-form" action="/entry/<%= entryData.entry_id %>/removefromfavourites" method="POST">
+                <input type="submit" value="&#11088; Added to Favourites"/></form>
+                <% } else if (favouritesData.length === 0) { %> 
+                  <form class="addtofavourites-form" id="addtofavourites-form" action="/entry/<%= entryData.entry_id %>/favourites" method="POST">
+                    <input type="submit" value="&#9734; Add to Favourites"/></form>
+                    <% } %>
+            </div>
+          </div>
       </div>
-      <div class="content">
-        <p><%= entryData.content %></p>
-      </div>
-      <div class="date-created">
-        <p>Posted on: <%= entryData.created_at %></p>
-      </div>
-      <div class="created-by">
-        <p>Created by: <%= entryData.username %></p>
-      </div>
-      <% if (username === entryData.username) { %>
-      <div class="links">
-        <a href="/entry/<%= entryData.entry_id %>/edit">Edit Entry</a>
-        <form action="/entry/<%= entryData.entry_id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this entry?');"><input type="submit" value="Delete Entry"/></form>
-      </div>
-      <% } %>
       <div class="comments">
         <div class="comments-body">
-          <h3>Comments:</h3>
-          <% for (let i = 0; i < sortedCommentsData.length; i += 1) { %>
-            <p><%= sortedCommentsData[i].comment %><br>
-              <%= sortedCommentsData[i].created_at %><br> 
-              <%= sortedCommentsData[i].username %> 
-              <% if (sortedCommentsData[i].username === username) { %>
-                <div class="deletecomment">
-                          <form action="/entry/<%= entryData.entry_id %>/comment/<%= sortedCommentsData[i].id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this comment?');"><input type="submit" value="Delete Comment"/></form>
-                </div>
-                <% } %> 
-            </p>
-            <% } %> 
+          <h2>Comments:</h2>
+          <% for (let i = 0; i < commentsData.length; i += 1) { %>
+          <div class="comment">
+            <h3><%= commentsData[i].comment %></h3>
+            <p><%= commentsData[i].created_at %></p>
+            <div class="last-line">
+              <p>- <%= commentsData[i].username %></p>
+              <% if (commentsData[i].username === username) { %>
+                  <form action="/entry/<%= entryData.entry_id %>/comment/<%= commentsData[i].id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this comment?');"><input type="submit" value="&#x1f5d1; Delete Comment"/></form>
+                <% } %>
+              </div>
+            </div>
+            <% } %>
         </div>
+        <div class="createcomment-body">
         <form class="createcomment-form" id="createcomment-form" action="/entry/<%= entryData.entry_id %>/comment" method="POST">
         <div class="form-group">
-          <textarea type="text" form="createcomment-form" id="comment" name="comment" rows="2" cols="50">Type comment here</textarea>
+          <textarea type="text" form="createcomment-form" id="comment" name="comment" rows="2" cols="50" placeholder="Type comment here"></textarea>
         </div>
         <input type="submit" value="Submit comment"/>
         </form>
-      </div>
-      <div class="favourites-button">
-        <% if (favouritesData.length > 0) { %>
-        <form class="removefromfavourites-form" id="removefromfavourites-form" action="/entry/<%= entryData.entry_id %>/removefromfavourites" method="POST">
-        <input type="submit" value="&#11088;"/></form>
-        <% } else if (favouritesData.length === 0) { %> 
-        <form class="addtofavourites-form" id="addtofavourites-form" action="/entry/<%= entryData.entry_id %>/favourites" method="POST">
-        <input type="submit" value="&#9734;"/></form>
-        <% } %>
+        </div>
       </div>
     </div>
   </body>

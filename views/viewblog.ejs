@@ -14,12 +14,11 @@ include('navbar2'); -%>
   <% for (let i = 0; i < data.length; i += 1) { %>
   <div class="container">
     <div class="entry">
-      <h1><%= data[i].title %></h1>
+      <h2><%= data[i].title %></h2>
       <h3><%= data[i].content %></h3>
-      <p><%= data[i].created_at %></p>
-      <p>Created by: <%= data[i].username %></p>
-      <div class="links">
-        <a href="/entry/<%= data[i].entry_id %>">View Entry</a>
+      <div class="last-line">
+      <p>Posted on: <%= data[i].created_at %></p>
+        <a href="/entry/<%= data[i].entry_id %>"><button type="button">&#x1f440; View</button></a>
       </div>
     </div>
   </div>

@@ -211,13 +211,13 @@ app.get('/entry/:id', (request, response) => {
     const promise3 = pool.query('SELECT * from favourites where entry_id = $1 AND user_id = $2', data);
     Promise.all([promise1, promise2, promise3]).then((allResults) => {
       const commentsData = allResults[0].rows;
-      const sortedCommentsData = commentsData.sort((a, b) => a.created_at - b.created_at);
-      for (let i = 0; i < sortedCommentsData.length; i += 1) {
-        const newDate = format(new Date(sortedCommentsData[i].created_at), 'dd MMM yyyy p');
-        sortedCommentsData[i].created_at = newDate;
+      commentsData.sort((a, b) => a.created_at - b.created_at);
+      for (let i = 0; i < commentsData.length; i += 1) {
+        const newDate = format(new Date(commentsData[i].created_at), 'dd MMM yyyy p');
+        commentsData[i].created_at = newDate;
       }
       console.log('comments');
-      console.log(sortedCommentsData);
+      console.log(commentsData);
       const entryData = allResults[1].rows[0];
       const entryDate = format(new Date(entryData.created_at), 'dd MMM yyyy p');
       entryData.created_at = entryDate;
@@ -227,7 +227,7 @@ app.get('/entry/:id', (request, response) => {
       const userId = [request.cookies.userId];
       console.log(userId);
       response.render('viewentry', {
-        sortedCommentsData, entryData, favouritesData, userId,
+        commentsData, entryData, favouritesData, userId,
       });
     }).catch((error) => {
       console.log(error);
@@ -322,7 +322,6 @@ app.put('/entry/:id', (request, response) => {
       return;
     }
     console.log('entry edited!');
-    console.log({ inputData });
     response.render('entryedited', { inputData });
   });
 });
@@ -408,6 +407,8 @@ app.get('/blog/:username', (request, response) => {
         data[i].created_at = newDate;
       }
 
+      data.sort((a, b) => b.entry_id - a.entry_id);
+
       response.render('viewblog', { data, username });
     });
   }
@@ -431,6 +432,8 @@ app.get('/favourites', (request, response) => {
       return pool.query(sqlQuery);
     }).then((result) => {
       const favouritesData = result.rows;
+      favouritesData.sort((a, b) => a.id - b.id);
+      console.log(favouritesData);
       response.render('favourites', { favouritesData });
     }).catch((error) => {
       console.log(error);

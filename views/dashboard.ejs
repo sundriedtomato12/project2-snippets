@@ -7,29 +7,16 @@ include('navbar2'); -%>
         <h1>Welcome back, <%= username %>!</h1>
       </div>
       <div class="user-stats">
-        <h3>You have written <%= numOfEntries[0] %> entries so far</h3>
+        <h3>You have written <%= numOfEntries[0] %> entries so far &#x1f4dd;</h3>
         <h3>Go ahead to view your blog, create a new entry, or read someone else's blog!</h3>
       </div>
       <div class="other-blogs">
-        <h3>Other Snippets users:</h3>
-          <table class="other-blogs">
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Blog Link</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% for (let i = 0; i < usersData.length; i += 1) { %>
-                <% if (usersData[i].username !== username) { %> 
-              <tr>
-                <td><%= usersData[i].username %></td>
-                <td><a href="/blog/<%= usersData[i].username %>">Click here to view blog</a></td>
-              </tr>
-              <% } %> 
-              <% } %>
-            </tbody>
-          </table>
+        <h3 class="header">Other Snippets users:</h3>
+        <% for (let i = 0; i < usersData.length; i += 1) { %>
+          <% if (usersData[i].username !== username) { %> 
+          <a href="/blog/<%= usersData[i].username %>"><h3 class="links"><%= usersData[i].username %></h3></a>
+        <% } %> 
+        <% } %>
       </div>
     </div>
   </body>
