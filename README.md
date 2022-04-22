@@ -35,8 +35,8 @@ Please do this only if you haven't already started using the app! Or the data wi
 
 ## ERD
 
-![ERD](../plans/ERD.png)
+![ERD](plans/ERD.png)
 
 ## User Flow
 
-![User Flow](../plans/userflow.png)
+![User Flow](plans/userflow.png)
