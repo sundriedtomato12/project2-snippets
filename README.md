@@ -19,3 +19,24 @@ Snippets is a micro-blogging app that allows users to share their thoughts in bi
 
 - [ x ] Users able to favourite and unfavourite specific entries
 - [ x ] Users able to view list of favourite entries
+
+## Setup
+
+Run the following commands to setup the database before starting :)
+
+1. npm run db:create
+2. npm run tables:create
+
+This last step is optional but you can do this if you'd like to start using your app with some data already in it.
+
+Please do this only if you haven't already started using the app! Or the data will be messed up. And please only do this once. :P
+
+3. npm run data:seed
+
+## ERD
+
+![ERD](../plans/ERD.png)
+
+## User Flow
+
+![User Flow](../plans/userflow.png)

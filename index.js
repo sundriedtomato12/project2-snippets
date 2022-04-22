@@ -54,7 +54,6 @@ app.use((request, response, next) => {
   next();
 });
 
-// GET homepage
 app.get('/', (request, response) => {
   if (loggedIn) {
     response.redirect('/dashboard');
@@ -63,7 +62,6 @@ app.get('/', (request, response) => {
   }
 });
 
-// GET sign up page
 app.get('/signup', (request, response) => {
   if (loggedIn) {
     response.redirect('/dashboard');
@@ -73,7 +71,6 @@ app.get('/signup', (request, response) => {
   }
 });
 
-// POST to create new user
 app.post('/signup', (request, response) => {
   console.log('accept POST request to sign up new user');
   sqlQuery = 'INSERT INTO users (username, password) VALUES ($1, $2)';
@@ -159,7 +156,6 @@ app.get('/dashboard', (request, response) => {
   }
 });
 
-// DELETE function to log user out
 app.delete('/logout', (request, response) => {
   console.log('request to log out');
   response.clearCookie('userId');
@@ -236,7 +232,6 @@ app.get('/entry/:id', (request, response) => {
   }
 });
 
-// POST function to create comment by entry id
 app.post('/entry/:id/comment', (request, response) => {
   console.log('accept post request to create comment on entry');
   console.log(request.body);
@@ -259,7 +254,6 @@ app.post('/entry/:id/comment', (request, response) => {
   });
 });
 
-// DELETE function to delete comment by id
 app.delete('/entry/:entryid/comment/:commentid', (request, response) => {
   console.log('request to delete comment id');
   console.log(request.params.commentid);
@@ -279,7 +273,6 @@ app.delete('/entry/:entryid/comment/:commentid', (request, response) => {
   });
 });
 
-// GET function to render page to edit entry by id
 app.get('/entry/:id/edit', (request, response) => {
   if (!loggedIn) {
     response.redirect('/');
@@ -306,7 +299,6 @@ app.get('/entry/:id/edit', (request, response) => {
   }
 });
 
-// PUT function to edit note by id
 app.put('/entry/:id', (request, response) => {
   console.log('request to edit entry id:');
   console.log(request.params.id);
@@ -362,7 +354,6 @@ app.post('/entry/:id/removefromfavourites', (request, response) => {
   });
 });
 
-// DELETE function to delete entry by id
 app.delete('/entry/:id', (request, response) => {
   console.log('request to delete entry id:');
   console.log(request.params.id);
@@ -380,7 +371,6 @@ app.delete('/entry/:id', (request, response) => {
   });
 });
 
-// GET function to view blog by username
 app.get('/blog/:username', (request, response) => {
   if (!loggedIn) {
     response.redirect('/');
