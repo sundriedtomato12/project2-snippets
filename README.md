@@ -22,7 +22,7 @@ Snippets is a micro-blogging app that allows users to share their thoughts in bi
 
 ## Setup
 
-Run the following commands to setup the database before starting :)
+After cloning the repo, please run the following commands to setup the database before starting :)
 
 1. npm run db:create
 2. npm run tables:create
