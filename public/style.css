@@ -122,6 +122,19 @@ div.home-body div.para-2 h2 {
   height: 160px;
 }
 
+div.home-body div.para-2 h2 a {
+  color: black;
+  padding: 3px;
+}
+
+div.home-body div.para-2 h2 a:hover {
+  background-color: #fef5ed;
+  border: 1px black solid;
+  border-radius: 2px;
+  transition: 0s;
+  padding: 2px;
+}
+
 /** Login Page */
 
 div.login-body div.header {

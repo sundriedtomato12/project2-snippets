@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS entries (
   id SERIAL PRIMARY KEY,
-  user_id TEXT,
+  user_id INT,
   title TEXT,
   content TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
