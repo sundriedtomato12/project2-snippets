@@ -4,7 +4,6 @@ import methodOverride from 'method-override';
 import cookieParser from 'cookie-parser';
 import { format } from 'date-fns';
 import jsSHA from 'jssha';
-import multer from 'multer';
 import getHash from './functions.js';
 
 // Initialise DB connection
@@ -43,7 +42,6 @@ app.use(methodOverride('_method'));
 // We will learn methods later in Coding Bootcamp to obfuscate this value in our code.
 const SALT = 'i love coding';
 
-const multerUpload = multer({ dest: 'uploads/' });
 let sqlQuery = '';
 let loggedIn;
 
