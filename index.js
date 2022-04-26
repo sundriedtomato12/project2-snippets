@@ -389,10 +389,10 @@ app.get('/blog/:username', (request, response) => {
   } else {
     console.log('request to view blog of username:');
     console.log(request.params.username);
-    const username = [request.params.username];
+    const currentBlogUsername = [request.params.username];
     sqlQuery = 'SELECT users.id AS user_id, users.username, entries.id AS entry_id, entries.title, entries.content, entries.created_at FROM users JOIN entries ON users.id = entries.user_id WHERE users.username = $1';
 
-    pool.query(sqlQuery, username, (error, result) => {
+    pool.query(sqlQuery, currentBlogUsername, (error, result) => {
       if (error) {
         console.log('Error executing query', error.stack);
         response.status(503).render('error2');
@@ -411,7 +411,7 @@ app.get('/blog/:username', (request, response) => {
 
       data.sort((a, b) => b.entry_id - a.entry_id);
 
-      response.render('viewblog', { data, username });
+      response.render('viewblog', { data, currentBlogUsername });
     });
   }
 });
