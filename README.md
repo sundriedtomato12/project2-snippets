@@ -35,7 +35,8 @@ Please do this only if you haven't already started using the app! Or the data wi
 
 ## Heroku App Deployed
 
-https://ptbc2-snippets.herokuapp.com/
+~~https://ptbc2-snippets.herokuapp.com/~~ 
+deprecated as of Dec 2022 because herokuapp no longer provides postgres as a free add-on :(
 
 ## ERD
 
